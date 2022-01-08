@@ -1,0 +1,37 @@
+<body class="body-addUser">
+<h1 class="h1cen">Khởi tạo Phòng/Khoa </h1>
+
+<form class="formclass" action="/users/userlist/addUD" method="POST">
+  <div class="form-row">
+    <div class="mb-3">
+      <label for="username">fullname: </label>
+      <input type="text" class="form-control" name="fullname" placeholder="Nhập fullname" required>
+    </div>
+     <div class="mb-3">
+      <label for="username">username: </label>
+      <input type="text" class="form-control" name="username" placeholder="Nhập username" required>
+    </div>
+     <div class="mb-3">
+      <label for="password">password: </label>
+      <input type="password" class="form-control" name="password" placeholder="Nhập password" required>
+    </div>
+     <div class="mb-3">
+      <label for="role">role: </label>
+      <select class="form-select" id="role" name="role">
+        <option value="department/faculty">department/faculty</option>
+        
+      </select>
+    </div>
+      <div class="row g-3">
+        <div class="col-sm-7">
+          <a href="/users/userlist" class="previous">&laquo; Trở về</a>
+          {{!-- <a href="/users/userlist"> Trở về</a> --}}
+        </div>
+        <div class="col-sm">
+          <button class="btn btn-primary" type="submit">Done</button>
+        </div>
+      </div>   
+  </div>
+</form>
+</body>
+

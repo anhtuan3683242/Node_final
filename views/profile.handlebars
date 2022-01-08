@@ -1,0 +1,98 @@
+<body class="body-profile1">
+<div class="container mt-4 mb-4 p-3 d-flex justify-content-center">
+    <div class="card-profile1 p-4">
+        <div class=" image d-flex flex-column justify-content-center align-items-center"> <button class="btn-profile btn-secondary"> 
+            <img src="{{user.image}}" height="100" width="100" />
+            </button>
+                        
+            <div class="d-flex flex-row justify-content-center align-items-center gap-2"> 
+                <form action="/profile" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file">
+                <input type="hidden" name ="id"id="id_file" value="{{user.id}}"/>
+                <button type="submit" name="upload" class="btn btn-primary pull-right">Upload</button>
+            </form>
+            </div>
+            <span id="name_dis" class="name mt-3">{{user.name}}</span> <span class="idd">{{user.email}}</span>
+            <div class="d-flex flex-row justify-content-center align-items-center gap-2"> 
+                <span class="idd1">{{user.id}}</span> </div>
+            {{!-- <div class=" d-flex mt-2"> <button class="btn11 btn-dark">Edit Profile</button> </div> --}}
+            <button class="btn btn-sm btn-outline-primary" onclick="edit_user('{{user.id}}')">Edit Profile</button>
+            <div class="text mt-3"> <span>{{user.role}}</span> </div>
+            <div class=" px-2 rounded mt-4 date "> <span class="join">Joined May,2021</span> </div>
+            <div class=" px-2 rounded mt-4 date ">Lớp: <span id="class_dis" class="bold"> {{user.class}}</span> </div>
+            <div class=" px-2 rounded mt-4 date ">Khoa: <span id="falculty_dis" class="bold"> {{user.falculty}}</span> </div>
+            <br>
+            <a class="btn btn-primary" href="/" role="button">Về trang chủ</a>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modelEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelEdit" aria-hidden="true">
+    <div class="modal-dialog">  
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title" id="exampleModalLabelEdit">Cập nhật thông tin</h4>
+          <button type="button" class="close" data-dismiss="modal" onclick="ed_user_close()">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+                <input type="hidden" id="id_edit" value="{{user.id}}"/>
+                <div class="form-group">
+                    <label for="name">Tên hiển thị</label>
+                    <input value="{{user.name}}" class="form-control" type="text" placeholder="Nhập tên người dùng" id="name_edit" name="name">
+                </div>
+                <div class="form-group">
+                    <label for="class">Lớp</label>
+                    <input value="{{user.class}}" class="form-control" type="text" placeholder="Nhập lớp" id="class_edit" name="class">
+                </div>
+                <div class="form-group">
+                    <label for="falculty">Khoa</label>
+                    <input value="{{user.falculty}}" class="form-control" type="text" placeholder="Nhập khoa" id="falculty_edit" name="falculty">
+                </div>
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="ed_user()">Cập nhật</button>
+          <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="ed_user_close()">Đóng</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+<!-- End Update user -->
+</body>
+<script>
+    function edit_user(id){
+        $('#modelEdit').modal('show')
+    }
+    function ed_user_close(){
+      $('#modelEdit').modal('hide')
+    }
+    function ed_user(){
+        let id = document.getElementById('id_edit').value
+        let name_text =document.getElementById('name_edit').value
+        let class_text =document.getElementById('class_edit').value
+        let falculty_text =document.getElementById('falculty_edit').value
+        $('#modelEdit').modal('hide') 
+        document.getElementById('name_dis').innerHTML = name_text
+        document.getElementById('class_dis').innerHTML = class_text
+        document.getElementById('falculty_dis').innerHTML = falculty_text 
+    
+        test = "/profile/edit/?uid="+id+"&name="+name_text+"&class="+class_text+"&falculty="+falculty_text
+        //alert(test)
+
+        $.ajax({
+            url: test,
+            method:'get',
+            success:function(data){
+                window.location.reload();
+            },
+            error:function(data){
+              console.log('error')
+                console.log(data)
+            }
+        })
+    }
+</script>

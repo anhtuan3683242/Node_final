@@ -1,0 +1,207 @@
+{{#ifEquals session.role "admin"}}
+<body class="body-userlist">
+<div class="container my-3">
+    <h4 class="my-5 text-primary text-center text-uppercase">Danh sách người dùng</h4>
+    <a class="btn btn-success btn-sm my-4" href="/users/userlist/addUD">Thêm người dùng</a>
+    <p>Chọn một người dùng để xem chi tiết</p>
+    <table class="table table-striped border">
+        <thead>
+        <tr>
+            <th>STT</th>
+            <th>Họ và tên</th>
+            <th>Tên đăng nhập</th>
+            <th>Chức vụ</th>
+            <th>Thao tác</th>
+        </tr>
+        </thead>
+        <tbody>
+            {{#each data}}
+            <tr id="tr{{id}}">
+                <td>{{stt}}</td>
+                <td id="ht{{id}}"><a href="/users/userlist/detail/{{id}}">{{name}}</a></td>
+                <td id="un{{id}}">{{username}}</td>
+                <td id="ro{{id}}">{{role}}</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="edit_user('{{id}}')">Chỉnh sửa</button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="delete_user('{{id}}')">Xóa</button>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+    <p>Tổng số người dùng: <strong class="text-danger">{{data.length}}</strong></p>
+</div>
+
+
+
+
+<!-- Confirm delete -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title" id="exampleModalLabel">Xóa người dùng</h4>
+          <button type="button" class="close" data-dismiss="modal" onclick="del_user_close()">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+          Bạn có chắc rằng muốn xóa <strong id="delname">Trần Minh Trí</strong>?
+        </div>
+        <input type="hidden" id="delid"/>
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" onclick="del_user()">Xóa</button>
+          <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="del_user_close()">Đóng</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+<!-- End Confirm delete -->
+
+
+<!-- Update user -->
+<div class="modal fade" id="modelEdit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelEdit" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title" id="exampleModalLabelEdit">Cập nhật thông tin người dùng</h4>
+          <button type="button" class="close" data-dismiss="modal" onclick="ed_user_close()">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+                <input type="hidden" id="editid"/>
+                <div class="form-group">
+                    <label class="paddd" for="name">Họ tên:</label>
+                    <input class="form-control" type="text" placeholder="Nhập tên người dùng" id="name_edit" name="name">
+                </div>
+                <div class="form-group">
+                    <label class="paddd" for="user">Tên đăng nhập:</label>
+                    <input class="form-control" type="text" placeholder="Nhập tên đăng nhập" id="username_edit" name="username">
+                </div>
+                
+                <div class="forrm2">
+                  <strong class="text"> Strong text </strong>
+                </div>
+                
+                
+                
+            
+        </div>
+        
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" onclick="ed_user()">Cập nhật</button>
+          <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="ed_user_close()">Đóng</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+<!-- End Update user -->
+<script>
+    (function()
+{
+  if( window.localStorage )
+  {
+    if( !localStorage.getItem('firstLoad') )
+    {
+      localStorage['firstLoad'] = true;
+      window.location.reload();
+    }  
+    else
+      localStorage.removeItem('firstLoad');
+  }
+})();
+
+    setTimeout(() => {
+        $('#flash-alert').fadeOut(2000)
+    }, 1000);
+    function edit_user(id){
+        let ht = $('#tr'+id).find('td')[1].innerText;
+        let username = $('#tr'+id).find('td')[2].innerText;
+        let role = $('#tr'+id).find('td')[3].innerText;
+        
+        document.getElementById('name_edit').value = ht;
+        document.getElementById('username_edit').value = username;
+        var div = document.getElementById('divID');
+        if(role ==  'admin'){
+          $(".text").html("admin");
+
+        }
+        if(role ==  'department/faculty'){
+          $(".text").html("admin");
+        }
+
+        
+        //$('#delname').text(ht)
+        $('#editid').text(id)
+        $('#modelEdit').modal('show')
+    }
+    function ed_user_close(){
+      $('#modelEdit').modal('hide')
+    }
+    function delete_user(id){
+        let ht = $('#tr'+id).find('td')[1].innerText
+        $('#delname').text(ht)
+        console.log(ht)
+        $('#delid').text(id)
+        $('#exampleModal').modal('show')
+    }
+    function del_user_close(){
+      $('#exampleModal').modal('hide')
+    }
+    function del_user(){
+        let id = $('#delid').text()
+        $('#exampleModal').modal('hide')
+        document.getElementById('tr'+id).style.display = 'none';
+
+        $.ajax({
+            url: '/users/delete/?uid='+ id,
+            method:'get',
+            success:function(data){
+                $('#tr'+id).remove()
+                window.location.reload();
+            },
+            error:function(data){
+                console.log(data)
+            }
+        })
+    }
+    function ed_user(){
+        let id = $('#editid').text()
+        let name_text =document.getElementById('name_edit').value
+        let username_text =document.getElementById('username_edit').value
+        let name_url = ""
+        const myArr = name_text.split(" ");
+        for (const i in myArr){
+            if (name_url == ""){ name_url = name_url + myArr[i]}
+            else{name_url = name_url + "+" + myArr[i]}
+        }
+        let username_url = username_text
+        $('#modelEdit').modal('hide') 
+        document.getElementById('ht'+id).innerHTML = name_text
+        document.getElementById('un'+id).innerHTML = username_text
+
+        test = "/users/userlist/edit/?uid="+id+"&name="+name_url+"&username="+username_url
+        //alert(test)
+
+        $.ajax({
+            url: test,
+            method:'get',
+            success:function(data){
+                window.location.reload();
+            },
+            error:function(data){
+              console.log('error')
+                console.log(data)
+            }
+        })
+    }
+</script>
+</body>
+{{/ifEquals}}

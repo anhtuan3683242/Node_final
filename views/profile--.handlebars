@@ -1,0 +1,239 @@
+
+
+<body class="body-profile">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-sm-6 col-md-5 col-lg-4">
+            <div class="card" class="w-100">
+                <img class="card-img-top" src="https://www.w3schools.com/bootstrap4/img_avatar1.png"
+                    alt="Card image">
+                    
+                {{#each userdetail}}
+                <div class="card-body">
+                    <h4 class="card-title text-primary">{{name}}</h4>
+                    <p class="card-text">Tên tài khoản: <strong>{{username}}</strong></p>
+                    <p class="card-text">Chức vụ: <strong>{{role}}</strong></p>
+                    {{#ifEquals role 'department/faculty'}}
+
+                    <button class="btn btn-secondary" onclick="change_password('{{id}}')">Đổi mật khẩu:</button></p>
+
+                    <p class="card-text">Các chuyên mục được cấp: </p>
+                    <br>
+                    
+                    {{/ifEquals}}
+                        
+                    
+                    {{#each ../cate_all}}
+                    <div class="alert alert-info" id="fnc{{id}}">
+                        <strong id="nc{{id}}">{{name_cate}}</strong>
+                        <button class="btn btn-sm btn-outline-danger" onclick="delete_cate('{{id}}')">Xóa</button>
+                        <br>
+                    </div>
+                    {{/each}}
+                    {{#ifEquals ../session.role 'admin'}}
+                    {{#ifEquals role 'department/faculty'}}
+                        <button type="button" class="btn btn-primary" onclick="open_addcate('{{id}}')">Thêm chuyên mục cho phòng/khoa</button>
+
+                    
+                    {{/ifEquals}}
+
+                    {{/ifEquals}}
+                    {{/each}}
+                </div>
+                
+            </div>
+            <p class="mt-3"><a href="/users/userlist" >Quay lại</a></p>
+        </div>
+    </div>
+</div>
+{{!-- pop up add categories --}}
+        <div class="modal fade" id="cateOption" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelEdit" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    {{#each userdetail}} 
+                    <h4 class="modal-title" id="exampleModalLabelEdit">Thêm chuyên mục cho {{username}}</h4>
+                    {{/each}}
+                    <button type="button" class="close" data-dismiss="modal" onclick="close_addcate()">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <input type="hidden" id="C_uid" />
+                    <select id="categories">
+                        {{#each categories_list}}
+                            <option value="{{name_cate}}">{{name_cate}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" onclick="confirm_addcate()">Xác nhận thêm chuyên mục</button>
+                  <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="close_addcate()">Đóng</button>
+                </div>
+                </form>
+              </div>
+            </div>
+          </div>
+{{!-- pop up delete categories --}}
+<div class="modal fade" id="DeleteCates" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title" id="exampleModalLabel">Xóa chuyên mục</h4>
+          <button type="button" class="close" data-dismiss="modal" onclick="close_delete_cate()">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+          Bạn có chắc rằng muốn xóa chuyên mục: <strong id="delcatename"></strong>?
+        </div>
+        <input type="hidden" id="delcateid"/>
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" onclick="confirm_delete_cate()">Xóa</button>
+          <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="close_delete_cate()">Đóng</button>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+  
+{{!-- pop up change password --}}
+<div class="modal fade" id="passOption" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelEdit" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    {{#each userdetail}} 
+                    <h4 class="modal-title" id="exampleModalLabelEdit">Đổi mật khẩu cho cho {{username}}</h4>
+                    {{/each}}
+                    <button type="button" class="close" data-dismiss="modal" onclick="close_change_password()">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <input type="hidden" id="CP_uid" />
+                    <label for="current_password" class="col col-form-label">Mật khẩu hiện tại:</label>
+                    <input class="form-control" id="current_password" type="password"></p>
+                    <label for="new_password" class="col col-form-label">Mật khẩu mới:</label>
+                    <input class="form-control" id="new_password" type="password"></p>
+                    <div class="alert-nopermission" id="alert-permission">
+                        <span class="closebtn-nopermission" onclick="this.parentElement.style.display='none';">&times;</span> 
+                        <strong id="check_pass"></strong>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" onclick="confirm_change_password()">Xác nhận đổi mật khẩu</button>
+                  <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="close_change_password()">Đóng</button>
+                </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+
+<script>
+    // mở add cate
+    function open_addcate(id){
+        document.getElementById('C_uid').value = id;
+        $('#cateOption').modal('show')
+    }
+    // đóng add cate
+    function close_addcate(){
+        $('#cateOption').modal('hide')
+    }
+    // xác nhận add cate
+    function confirm_addcate(){
+        let id = document.getElementById('C_uid').value
+        let cate_choose = document.getElementById('categories').value
+        let cate_choose_url = ""
+        const myArr = cate_choose.split(" ");
+        for (const i in myArr){
+            if (cate_choose_url == ""){ cate_choose_url = cate_choose_url + myArr[i]}
+            else{cate_choose_url = cate_choose_url + "+" + myArr[i]}
+        }
+        //alert(content_url)
+        $('#cateOption').modal('hide')
+        test = "/users/userlist/addcate/?idu="+id+"&catechoose="+cate_choose_url
+        //alert(test)
+
+        $.ajax({
+            url: test,
+            method:'get',
+            success:function(data){
+                window.location.reload();
+            },
+            error:function(data){
+            console.log('error')
+                console.log(data)
+            }
+        })
+    }
+    // mở delete cate
+    function delete_cate(id){
+        let cate_select = document.getElementById('nc'+id).innerText
+        document.getElementById('delcateid').value = id;
+        document.getElementById('delcatename').innerHTML = cate_select;
+        $('#DeleteCates').modal('show')
+    }
+    // đóng delete cate
+    function close_delete_cate(){
+        $('#DeleteCates').modal('hide')
+    }
+    
+    // xác nhận xóa cate
+    function confirm_delete_cate(){
+        let id = document.getElementById('delcateid').value;
+        $('#DeleteCates').modal('hide')
+        document.getElementById('fnc'+id).style.display = 'none';
+        
+        $.ajax({
+            url: '/users/userlist/delete/?idcate='+ id,
+            method:'get',
+            success:function(data){
+                $('#tr'+id).remove()
+                window.location.reload();
+            },
+            error:function(data){
+                console.log(data)
+            }
+        })
+    }
+    // thêm
+    // mở change pass
+    function change_password(id){
+        document.getElementById('CP_uid').value = id;
+        $('#passOption').modal('show')
+    }
+    // đóng change pass
+    function close_change_password(){
+        $('#passOption').modal('hide')
+    }
+    // confirm changepass
+    function confirm_change_password(){
+        let id = document.getElementById('CP_uid').value
+        let current_password = document.getElementById('current_password').value
+        let new_password = document.getElementById('new_password').value
+        
+        
+        //alert(content_url)
+        $('#passOption').modal('hide')
+        test = "/users/userlist/changepass/?idu="+id+"&cpassword="+current_password+"&npassword="+new_password
+        //alert(test)
+
+        $.ajax({
+            url: test,
+            method:'get',
+            success:function(data){
+                window.location.reload();
+            },
+            error:function(data){
+            console.log('error')
+                console.log(data)
+            }
+        })
+    }
+</script>
+</body>

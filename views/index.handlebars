@@ -1,0 +1,870 @@
+<script>
+    var inputs = document.querySelectorAll( '.inputfile' );
+Array.prototype.forEach.call( inputs, function( input )
+{
+	var label	 = input.nextElementSibling,
+		labelVal = label.innerHTML;
+
+	input.addEventListener( 'change', function( e )
+	{
+		var fileName = '';
+		if( this.files && this.files.length > 1 )
+			fileName = ( this.getAttribute( 'data-multiple-caption' ) || '' ).replace( '{count}', this.files.length );
+		else
+			fileName = e.target.value.split( '\\' ).pop();
+
+		if( fileName )
+			label.querySelector( 'span' ).innerHTML = fileName;
+		else
+			label.innerHTML = labelVal;
+	});
+});
+</script>
+<body class="body-index">
+    
+
+    <!-- content-area -->
+
+    <div class="container-index">
+        <div class="left-sidebar">
+
+        </div>
+
+        <!-- main-content -->
+
+        <div class="content-area">
+            
+
+            <div class="write-post-container">
+                {{#if session}}
+                <div class="user-profile">
+                    <img id="sessionimage" src="{{session.image}}" onError="this.onerror=null;this.src='/images/default.png';" alt="">
+                    <div>
+                        
+                        <p> {{session.fullname}}</p>
+                        <input id="sessionid" type="hidden" value="{{session.id}}"/>
+                        <small>Public <i class="fas fa-caret-down"></i></small>
+                    </div>
+                </div>
+                {{/if}}
+
+                <div class="post-upload-textarea">
+                    <textarea onclick="post_topic('{{id}}')" name="" placeholder="What's on your mind, {{session.fullname}}?" id="" cols="30" rows="3"></textarea>
+                    <div class="add-post-links">
+                        <a href="#"><img src="/images/photo.png" alt="">Photo/Video</a>
+
+                    </div>
+                </div>
+            </div>
+            {{#each data}}
+            
+            <div id="counttopic" class="hide_topic_count">
+                <div id="topich{{id}}" class="status-field-container write-post-container">
+                    <div class="user-profile-box">
+                        <div class="user-profile">
+                            <img id="userimg{{userid}}{{stt}}" src="{{userimg}}" onError="this.onerror=null;this.src='/images/default.png';" alt="">
+                            <div>
+                                <input id="topicid_co{{stt}}" type="hidden" value="{{id}}"/>
+                                <input id="uiss{{stt}}" type="hidden" value="{{userid}}"/>
+                                <input id="ui{{id}}" type="hidden" value="{{userid}}"/>
+                                <input id="role{{id}}" type="hidden" value="{{role}}"/>
+                                <input id="stt{{id}}" type="hidden" value="{{stt}}"/>
+                                <p id="fn{{id}}"> <a href="/topic/detail/{{userid}}">{{fullname}}</a> </p>
+                                <small>{{date_public}}, {{time_public}}</small>
+                            </div>
+                        </div>
+                        
+                        <div class="topic_option_hide" id="to{{userid}}{{stt}}">
+                            <a onclick="topic_option('{{id}}')" href="#"><i class="fas fa-ellipsis-v"></i></a>
+                        </div>
+                        
+                    </div>
+                    <div class="status-field">
+                        <p class="content_post_id" id="ct{{id}}">{{content}} </p>
+                    {{#ifEquals image "mốt thêm sau"}}
+                    {{else}}
+                        
+                        <img width="600" height="315" src="{{image}}" />
+                    {{/ifEquals}}
+                        
+                        <iframe width="100%" height="315" class="youtube_link_hide" id="link_youtube{{userid}}{{stt}}"
+                            src="https://www.youtube.com/embed/{{code_youtube}}">
+                        </iframe>
+                        
+                        
+                    </div>
+                    <hr>
+                        <div class="activity-icons">
+                            <div id="num_comment{{id}}"><img src="/images/comments.png" alt="">{{num_comment}}</div>           
+                        </div>     
+
+                    {{#each ../comment}}
+                    
+                        <div id="comtoid{{userid_comment}}{{topicid_comment}}{{stt}}{{../stt}}" class="comment-section">
+                            <input id="topicid_comment_z{{stt}}" type="hidden" value="{{topicid_comment}}">
+                            <input id="userid_comment_z{{stt}}" type="hidden" value="{{userid_comment}}">
+                            <input id="topicid_comment_option{{id_comment}}" type="hidden" value="{{topicid_comment}}">
+                            <input id="sttcomment{{id_comment}}" type="hidden" value="{{stt}}">
+                            <input id="stttopic{{id_comment}}{{stt}}{{topicid_comment}}" type="hidden" value="{{../stt}}">
+                            <div class="post-profile-picture">
+                                    <img id="couserimg{{userid_comment}}{{topicid_comment}}{{stt}}{{../stt}}" onError="this.onerror=null;this.src='/images/default.png';" src="{{userimg}}" alt="">
+                                    <div class="user-profile">             
+                                        <div class="alert alert-primary">
+                                            <p  class="commentname"id="co_fullname{{id_comment}}"> {{fullname_comment}}</p>
+                                            <div class="commentcontent" id="co_content{{id_comment}}">{{comment_content}}</div>
+                                        </div>                       
+                                        <div class="option_comment" id="co{{userid_comment}}{{topicid_comment}}{{stt}}{{../stt}}" >
+                                            <a onclick="topic_comment_option('{{id_comment}}')" href="#"><i class="fas fa-ellipsis-v"></i></a>
+                                        </div>
+                                                            {{!-- <div class="topic_option_hide" id="to{{userid}}{{stt}}">
+                            <a onclick="topic_option('{{id}}')" href="#"><i class="fas fa-ellipsis-v"></i></a>
+                        </div> --}}
+                                    </div>      
+                            </div>
+                            
+                        </div>
+                    
+                    {{/each}}   
+                    <hr>
+                    <div class="post-profile-picture">
+                            <textarea class="form-control" onclick="topic_comment('{{id}}')" name="" placeholder="Write a comment for {{fullname}}" cols="50" rows="1"></textarea>
+                    </div>
+                </div>
+            </div>
+           
+            {{/each}}
+            <input id="comment_length" type="hidden" value="{{comment.length}}"/>
+            <input id="data_length" type="hidden" value="{{data.length}}"/>
+
+        </div>
+
+
+
+        
+
+        <!-- popup write -->
+        <div class="modal fade" id="modelWrite" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelEdit" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="form-group">
+                    <div id="progress-wrp" class="progress" style="height:5px">
+                        <div class="progress-bar bg-success" style="width:40%;height:10px"></div>
+                    </div>
+                </div>
+                <div class="modal-header">
+                  <h4 class="modal-title" id="exampleModalLabelEdit">Tạo bài viết</h4>
+                  <button type="button" class="close" data-dismiss="modal" onclick="post_topic_close()">&times;</button>
+                  
+                </div>
+                
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <input type="hidden" id="T_userid" value="{{session.id}}"/>
+                    <input type="hidden" id="T_username" value="{{session.fullname}}"/>
+                    <input type="hidden" id="T_userrole" value="{{session.role}}"/>
+                    <input type="hidden" id="T_userimage" value="{{session.image}}"/>
+
+                    <div class="user-profile">
+                        <img src="{{session.image}}" onError="this.onerror=null;this.src='/images/default.png';" alt="">
+                        <div>
+                            <p>{{session.fullname}}</p>
+                            <small>Public <i class="fas fa-caret-down"></i></small>
+                        </div>
+                    </div>
+                    
+                    <div class="post-upload-textarea">
+                        <textarea name="context-write" placeholder="What's on your mind, {{session.fullname}}?" id="T_content" cols="40" rows="3"></textarea>
+                        
+                       <div class="add-post-links">
+                            {{!-- <label class="labelup" for="upload-photo">Đăng hình</label>
+                            <input type="file" name="photo" id="upload-photo" /> --}}
+                            {{!-- <input type="file" name="file" class="custom-file-input" id="customFile">
+                            <label class="custom-file-label" for="customFile">Choose file</label> --}}
+                            <input type="file" name="file" id="customFile" class="inputfile" data-multiple-caption="{count} files selected" multiple />
+                            <label for="customFile">Choose a file</label>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" onclick="pt_topic()">Đăng bài</button>
+                  <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="post_topic_close()">Đóng</button>
+                </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        <!-- popup topic option -->
+        <!-- popup topic edit -->
+        <div class="modal fade" id="modelTOption" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelEdit" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                  <h4 class="modal-title" id="exampleModalLabelEdit">Sửa/Xóa bài viết</h4>
+                  <button type="button" class="close" data-dismiss="modal" onclick="topic_option_close()">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <input type="hidden" id="T_uiedit" />
+                    <input type="hidden" id="T_tiedit" />
+                    <input type="hidden" id="T_roleedit" />
+                    <div class="user-profile">
+                        <img src="{{session.image}}" onError="this.onerror=null;this.src='/images/default.png';" alt="">
+                        <div>
+                            <p id="topic_editFN"></p>
+                            <small>Public <i class="fas fa-caret-down"></i></small>
+                        </div>
+                    </div>
+                    <div class="post-upload-textarea">
+                        <textarea  name="context-write"  id="T_contentedit" cols="30" rows="3"></textarea>
+                        
+                        <div class="add-post-links">
+                            <a href="#"><img src="/images/photo.png" alt="">Photo/Video</a>
+                            <a href="#"><img src="/images/feeling.png" alt="">Feeling Activity</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" onclick="edit_topic()">Sửa bài viết</button>
+                  <button type="button" class="btn btn-primary" onclick="delete_topic()">Xóa bài viết</button>
+                  <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="topic_option_close()">Đóng</button>
+                </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        <!-- Confirm delete topic -->
+        <div class="modal fade" id="TopicDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel">Xóa bài viết</h4>
+                <button type="button" class="close" data-dismiss="modal" onclick="delete_topic_close()">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                Bạn có chắc rằng muốn xóa bài viết này?
+                </div>
+                <input type="hidden" id="delid"/>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="del_topic()">Xóa</button>
+                <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="delete_topic_close()">Đóng</button>
+                </div>
+            </div>
+            </div>
+        </div>
+        <!-- End Confirm delete -->
+        {{!-- pop up comment --}}
+        <div class="modal fade" id="modelComment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelEdit" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                  <h4 class="modal-title" id="exampleModalLabelEdit">Comment bài viết</h4>
+                  <button type="button" class="close" data-dismiss="modal" onclick="topic_comment_close()">&times;</button>
+                </div>
+                
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <input type="hidden" id="T_comment_userid" value="{{session.id}}"/>
+                    <input type="hidden" id="T_comment_username" value="{{session.fullname}}"/>
+                    <input type="hidden" id="T_comment_userrole" value="{{session.role}}"/>
+                    <input type="hidden" id="T_comment_userimage" value="{{session.image}}"/>
+                    <input type="hidden" id="T_comment_topicid" />
+                    <div class="user-profile">
+                        <img src="{{session.image}}" onError="this.onerror=null;this.src='/images/default.png';" alt="">
+                        <div>
+                            <p> {{session.fullname}}</p>
+                        </div>
+                    </div>
+                    <div class="post-upload-textarea">
+                        <textarea name="context-write" placeholder="Write your comment, {{session.fullname}}?" id="T_comment_content"  rows="3"></textarea>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" onclick="confirm_comment()">Bình luận</button>
+                  <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="topic_comment_close()">Đóng</button>
+                </div>
+                </form>
+              </div>
+            </div>
+        </div>
+        <!-- popup comment option -->
+        <div class="modal fade" id="modelCOption" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabelEdit" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                  <h4 class="modal-title" id="exampleModalLabelEdit">Sửa/Xóa comment</h4>
+                  <button type="button" class="close" data-dismiss="modal" onclick="topic_comment_option_close()">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <input type="hidden" id="T_comment_uiedit" />
+                    <input type="hidden" id="T_comment_tiedit" />
+                    <input type="hidden" id="T_commentid" />
+                    <input type="hidden" id="T_comment_option_topicid" />
+                    <div class="user-profile">
+                        <img src="{{session.image}}" onError="this.onerror=null;this.src='/images/default.png';"     alt="">
+                        <div>
+                            <p id="topic_comment_editFN"></p>
+                        
+                        </div>
+                    </div>
+                    <div class="post-upload-textarea">
+                        <textarea  name="context-write"  id="T_comment_contentedit" cols="30" rows="3"></textarea>
+                        
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" onclick="edit_comment_topic()">Sửa bình luận</button>
+                  <button type="button" class="btn btn-primary" onclick="delete_comment_topic()">Xóa bình luận</button>
+                  <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="topic_comment_option_close()">Đóng</button>
+                </div>
+                </form>
+              </div>
+            </div>
+        </div>
+        <!-- Confirm delete comment -->
+        <div class="modal fade" id="CommentDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel">Xóa bình luận</h4>
+                <button type="button" class="close" data-dismiss="modal" onclick="delete_comment_topic_close()">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                Bạn có chắc rằng muốn xóa bình luận này?
+                </div>
+                <input type="hidden" id="delid"/>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                <button type="button" class="btn btn-danger" onclick="del_comment_topic()">Xóa</button>
+                <button type="button" class="btn btn-dark" data-dismiss="modal" onclick="delete_comment_topic_close()">Đóng</button>
+                </div>
+            </div>
+            </div>
+        </div>
+        <!-- sidebar -->
+        <div class="right-sidebar">
+            <div class="heading-link">
+                <h4>Thông báo mới</h4>
+                <a href="/Ntopic">Xem tất cả thông báo</a>
+            </div>
+            <div class="scroll-container">
+                {{#each notitopic}}
+                    <hr>
+                    <div >
+                        <strong>[{{categories}}] - {{date_public}}</strong>
+                        <p>{{subject}}</p>
+                        <p><a href="/Ntopic/detail/{{id}}">Chi tiết thông báo</a></p>
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    <footer id="footer">
+        <div class="divElement">
+            <a href="#" id="loadMore">Load More</a>
+
+            </p>
+        </div>
+
+    </footer>
+
+    <script>
+        $(function () {
+            $(".hide_topic_count").slice(0, 10).show();
+            $("#loadMore").on('click', function (e) {
+                e.preventDefault();
+                $(".hide_topic_count:hidden").slice(0, 10).slideDown();
+                if ($(".hide_topic_count:hidden").length == 0) {
+                    $("#load").fadeOut('slow');
+                }
+                $('html,body').animate({
+                    scrollTop: $(this).offset().top
+                }, 1500);
+            });
+        });
+        
+
+    $(".custom-file-input").on("change", function () {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+        let session_id = document.getElementById('sessionid').value
+        //data_length
+        let data_length = document.getElementById('data_length').value
+        let comment_length = document.getElementById('comment_length').value
+        //userimg{{userid}}{{stt}}
+        
+        let hide_post = 0
+        // for hiển thị option topic
+        for(let i =1;i<=data_length;i++){
+            let uiss = document.getElementById('uiss'+i).value
+            if (uiss == session_id){
+                document.getElementById('to'+session_id+i).style.display = "block";
+            }
+            /*if( i >=2){
+                document.getElementById('counttopic'+i).style.display = "none"
+                hide_post = hide_post +1
+            }*/
+            issrcvalue = document.getElementById('link_youtube'+uiss+i).src
+            if(issrcvalue == "https://www.youtube.com/embed/"){
+                document.getElementById('link_youtube'+uiss+i).style.display = "none";
+            }
+            
+        }
+        //alert(hide_post)
+        
+
+        
+        //couserimg{{userid_comment}}{{topicid_comment}}{{stt}}{{../stt}}
+        //for hiển thị option comment
+        for(let y =1;y<=data_length;y++){
+            let topicid_topic_sa = document.getElementById('topicid_co'+y).value
+            content_topic_change = document.getElementById('ct'+topicid_topic_sa).innerText
+            //alert(y)
+            for (let x = 1; x<=comment_length;x++){
+                let topicid_comment = document.getElementById('topicid_comment_z'+x).value
+                let userid_comment = document.getElementById('userid_comment_z'+x).value
+                if(topicid_topic_sa == topicid_comment){
+                    document.getElementById('comtoid'+userid_comment+topicid_comment+x+y).style.display = "block";  
+                    
+                }
+
+                
+
+                if(userid_comment == session_id){
+                    
+                    document.getElementById('co'+userid_comment+topicid_comment+x+y).style.display = "block";
+                }
+            }
+        }
+        
+        function fix_href(){
+            let data_length = document.getElementById('data_length').value
+            lastest_content = ""
+            for(let u =1;u<=data_length;u++){
+                var urlregex3 = /(https?:\/\/[^\s]+)/g;
+                let topicid_topic_sa = document.getElementById('topicid_co'+u).value
+                content_topic_change = document.getElementById('ct'+topicid_topic_sa).innerText
+                content_topic_change = content_topic_change
+                condition_abandon = content_topic_change.replace(urlregex3, '<a href="$1">$1</a>')
+
+                if(content_topic_change == condition_abandon){
+                    lastest_content = ""
+                }
+                else {
+                    content_split_change = content_topic_change.split(" ")
+                    for (let o=1 ;o<= content_split_change.length;o++){
+                        /*if(content_split_change[i] == "<A"){
+                            lastest_content = lastest_content +""
+                        }*/
+                    }
+                    document.getElementById('ct'+topicid_topic_sa).innerHTML = content_topic_change
+                    //alert(content_topic_change)
+                }
+            }
+        //alert(p)
+        }
+        fix_href();
+        
+     
+        function post_topic(id){
+            //$('#delname').text(ht)
+            $('#modelWrite').modal('show')
+        }
+
+        function post_topic_close(){
+            $('#modelWrite').modal('hide')
+        }
+        var Upload = function (file) {
+        this.file = file;
+        };
+
+    Upload.prototype.getType = function() {
+        return this.file.type;
+    };
+    Upload.prototype.getSize = function() {
+        return this.file.size;
+    };
+//undefined
+    Upload.prototype.getName = function() {
+        return this.file.name;
+    };
+    Upload.prototype.doUpload = function (test) {
+        var that = this;
+        var formData = new FormData();
+        //alert(test)
+        // add assoc key values, this will be posts values
+        formData.append("file", this.file, this.getName());
+        formData.append("upload_file", true);
+
+
+        $.ajax({
+            type: "POST",
+            url: test,
+            xhr: function () {
+                alert(test)
+                var myXhr = $.ajaxSettings.xhr();
+                if (myXhr.upload) {
+                    myXhr.upload.addEventListener('progress', that.progressHandling, false);
+                }
+                return myXhr;
+            },
+            success: function (data) {
+                window.location.reload();
+            },
+            error: function (error) {
+                // handle error
+            },
+            async: true,
+            data: formData,
+            cache: false,
+            contentType: false,
+            processData: false,
+            timeout: 60000
+        });
+    };
+
+    Upload.prototype.progressHandling = function (event) {
+        var percent = 0;
+        var position = event.loaded || event.position;
+        var total = event.total;
+        var progress_bar_id = "#progress-wrp";
+        if (event.lengthComputable) {
+            percent = Math.ceil(position / total * 100);
+        }
+        // update progressbars classes so it fits your code
+        $(progress_bar_id + " .progress-bar").css("width", +percent + "%");
+        $(progress_bar_id + " .status").text(percent + "%");
+    };
+
+        function pt_topic(){
+            
+            let id = document.getElementById('T_userid').value
+            let name_text =document.getElementById('T_username').value
+            let content_text =document.getElementById('T_content').value
+            let role_text = document.getElementById('T_userrole').value
+            let userimage_text = document.getElementById('T_userimage').value
+            
+            let name_url = ""
+            const myArr = name_text.split(" ");
+            for (const i in myArr){
+                if (name_url == ""){ name_url = name_url + myArr[i]}
+                else{name_url = name_url + "+" + myArr[i]}
+            }
+            code_youtube = ""
+            var urlregex2 = /(https?:\/\/[^\s]+)/g;
+            text_convert_link_href = content_text.replace(urlregex2, '<a href="$1">$1</a>')
+            //alert(text_convert_link_href)
+            if(content_text == text_convert_link_href){
+                code_youtube = ""
+            }
+            else{
+                var urlRegex = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            url_link_youtube = content_text.replace(urlRegex, '$2')
+            const code_link_youtube = url_link_youtube.split(" ");
+            code_youtube = code_youtube + code_link_youtube[0]
+            //alert(url_link_youtube)
+            }
+            let content_url = ""
+            const myArr1 = text_convert_link_href.split(" ");
+            for (const i in myArr1){
+                if (content_url == ""){ content_url = content_url + myArr1[i]}
+                else{content_url = content_url + "+" + myArr1[i]}
+            }
+            //alert(content_url)
+            $('#modelWrite').modal('hide')
+            var file = $("#customFile")[0].files[0];
+            var upload = new Upload(file);
+            test = "/ptopic/?id="+id+"&name="+name_url+"&content="+content_url+"&role="+role_text+"&cy="+code_youtube+"&userimg="+userimage_text
+            //alert(test)
+            if(file != undefined){
+                upload.doUpload(test);
+            }
+            else{
+            $.ajax({
+                url: test,
+                method:'post',
+                success:function(data){
+                    window.location.reload();
+                },
+                error:function(data){
+                console.log('error')
+                    console.log(data)
+                }
+            })
+        }
+
+    }
+             
+        // hiện bản chỉnh sửa topic
+        function topic_option(id) {
+            //alert(id)
+            let userid_topic = document.getElementById("ui"+id).value
+            let role_topic = document.getElementById("role"+id).value
+            let content_topic = document.getElementById("ct"+id).innerText
+            let fullname_topic = document.getElementById("fn"+id).innerText
+            document.getElementById('T_uiedit').value = userid_topic;
+            document.getElementById('T_tiedit').value = id;
+            document.getElementById('T_roleedit').value = role_topic;
+            document.getElementById('T_contentedit').innerHTML = content_topic;
+            document.getElementById('topic_editFN').innerHTML = fullname_topic;
+            //alert(content_topic)
+            
+            $('#modelTOption').modal('show')
+        }
+
+        function topic_option_close(){
+            $('#modelTOption').modal('hide')
+        }
+        // hàm thực hiện chỉnh sửa topic
+        function edit_topic(){
+            let topicid_text = document.getElementById('T_tiedit').value
+            let userid_topic_text =document.getElementById('T_uiedit').value
+            let content_topic_text =document.getElementById('T_contentedit').value
+            let role_topic_text = document.getElementById('T_roleedit').value
+            let stt_topic = document.getElementById('stt'+topicid_text).value
+            let userimage_topic = document.getElementById('sessionimage').src
+            //alert(userimage_topic)
+
+            code_youtube = ""
+            var urlregex2 = /(https?:\/\/[^\s]+)/g;
+            text_convert_link_href = content_topic_text.replace(urlregex2, '<a href="$1">$1</a>')
+            //alert(text_convert_link_href)
+            if(content_topic_text == text_convert_link_href){
+                code_youtube = ""
+            }
+            else{
+            var urlRegex = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            url_link_youtube = content_topic_text.replace(urlRegex, '$2')
+            const code_link_youtube = url_link_youtube.split(" ");
+            code_youtube = code_youtube + code_link_youtube[0]
+            //alert(url_link_youtube)
+            }
+            let content_url = ""
+            const myArr1 = text_convert_link_href.split(" ");
+            for (const i in myArr1){
+                if (content_url == ""){ content_url = content_url + myArr1[i]}
+                else{content_url = content_url + "+" + myArr1[i]}
+            }
+            //alert(content_url)
+            //userimg{{id}}
+            $('#modelTOption').modal('hide')
+            document.getElementById("ct"+topicid_text).innerHTML = text_convert_link_href
+            //document.getElementById("userimg"+userid_topic_text+stt_topic).src = userimage_topic
+            //alert(text_convert_link_href)
+            
+            document.getElementById("link_youtube"+userid_topic_text+stt_topic).src = "https://www.youtube.com/embed/"+code_youtube
+            
+            //id="link_youtube{{userid}}{{stt}}" src="https://www.youtube.com/embed/{{code_youtube}}"
+                        
+            test = "/editopic/?idt="+topicid_text+"&userid="+userid_topic_text+"&contentedit="+content_url+"&role="+role_topic_text+"&cy="+code_youtube
+            //alert(test)
+
+            $.ajax({
+                url: test,
+                method:'get',
+                success:function(data){
+                    window.location.reload();
+                },
+                error:function(data){
+                console.log('error')
+                    console.log(data)
+                }
+            })
+        }
+        // hiện bản xóa topic
+        function delete_topic(){
+            $('#TopicDelete').modal('show')
+
+        }
+        function delete_topic_close(){
+            $('#TopicDelete').modal('hide')
+        }
+        // hàm thực hiện xóa topic
+        function del_topic() {
+            let topic_id = document.getElementById('T_tiedit').value
+            $('#TopicDelete').modal('hide')
+            $('#modelTOption').modal('hide')
+            document.getElementById('topich'+topic_id).style.display = 'none';
+            
+            //dung ajax gui request len link delete
+            $.ajax({
+                url: '/deleteopic/?idt='+topic_id,
+                method:'get',
+                success:function(data){
+                    $('#tr'+id).remove()
+                    window.location.reload();
+                },
+                error:function(data){
+                    console.log(data)
+                }
+            })
+        }
+        // hiển thị comment
+        function topic_comment(id){
+            document.getElementById('T_comment_topicid').value = id;
+            $('#modelComment').modal('show')
+        }
+        // đóng comment
+        function topic_comment_close(){
+            $('#modelComment').modal('hide')
+        }
+        // confirm comment
+        function confirm_comment(){
+            let topicid_comment_text = document.getElementById('T_comment_topicid').value
+            let userid_topic_comment_text =document.getElementById('T_comment_userid').value
+            let content_comment_text =document.getElementById('T_comment_content').value
+            let role_topic_comment_text = document.getElementById('T_comment_userrole').value
+            let fullnameuser_comment_text = document.getElementById('T_comment_username').value
+            let userimage_comment_text = document.getElementById('T_comment_userimage').value
+
+            let fullname_comment_url = ""
+            const myArr = fullnameuser_comment_text.split(" ");
+            for (const i in myArr){
+                if (fullname_comment_url == ""){ fullname_comment_url = fullname_comment_url + myArr[i]}
+                else{fullname_comment_url = fullname_comment_url + "+" + myArr[i]}
+            }
+
+            let content_comment_url = ""
+            const myArr1 = content_comment_text.split(" ");
+            for (const i in myArr1){
+                if (content_comment_url == ""){ content_comment_url = content_comment_url + myArr1[i]}
+                else{content_comment_url = content_comment_url + "+" + myArr1[i]}
+            }
+
+            $('#modelComment').modal('hide')
+            test = "/comment/?idt="+topicid_comment_text+"&userid="+userid_topic_comment_text+"&contentcomment="+content_comment_url+"&role="+role_topic_comment_text+"&fullname="+fullname_comment_url+"&userimg="+userimage_comment_text
+            //alert(test)
+
+            $.ajax({
+                url: test,
+                method:'get',
+                success:function(data){
+                    window.location.reload();
+                },
+                error:function(data){
+                console.log('error')
+                    console.log(data)
+                }
+            })
+        }
+        // hiển thị comment option
+        function topic_comment_option(id_comment){
+            let content_topic_comment = document.getElementById("co_content"+id_comment).innerText
+            let fullname_topic_comment = document.getElementById("co_fullname"+id_comment).innerText
+            let topicid_comment_option = document.getElementById("topicid_comment_option"+id_comment).value
+
+            document.getElementById('topic_comment_editFN').innerHTML = fullname_topic_comment
+            document.getElementById('T_comment_contentedit').innerHTML = content_topic_comment
+            document.getElementById('T_commentid').value = id_comment
+            document.getElementById('T_comment_option_topicid').value = topicid_comment_option
+            $('#modelCOption').modal('show')
+        }
+        function topic_comment_option_close(){
+            $('#modelCOption').modal('hide')
+        }
+        function edit_comment_topic(){
+            let content_topic_comment_text = document.getElementById('T_comment_contentedit').value
+            let fullname_topic_comment_text =document.getElementById('topic_comment_editFN').innerText
+            let commentid_topic_text =document.getElementById('T_commentid').value
+            
+            let content_comment_url = ""
+            const myArr1 = content_topic_comment_text.split(" ");
+            for (const i in myArr1){
+                if (content_comment_url == ""){ content_comment_url = content_comment_url + myArr1[i]}
+                else{content_comment_url = content_comment_url + "+" + myArr1[i]}
+            }
+
+            $('#modelCOption').modal('hide')
+            document.getElementById("co_content"+commentid_topic_text).innerHTML = content_topic_comment_text
+            test = "/editcomment/?idc="+commentid_topic_text+"&commentedit="+content_comment_url+"&fullname="+fullname_topic_comment_text
+            //alert(test)
+
+            $.ajax({
+                url: test,
+                method:'get',
+                success:function(data){
+                    window.location.reload();
+                },
+                error:function(data){
+                console.log('error')
+                    console.log(data)
+                }
+            })
+        }
+        // hiện / đóng delete comment
+        function delete_comment_topic(){
+            $('#CommentDelete').modal('show')
+        }
+        function delete_comment_topic_close(){
+            $('#CommentDelete').modal('hide')
+        }
+        // hàm thực hiện xóa comment
+        function del_comment_topic(){
+            let comment_id = document.getElementById('T_commentid').value
+            let T_comment_option_topicid = document.getElementById('T_comment_option_topicid').value
+            let number_comment = document.getElementById('num_comment'+T_comment_option_topicid).innerText
+            let sttcomment = document.getElementById('sttcomment'+comment_id).value
+            let stttopic = document.getElementById('stttopic'+comment_id+sttcomment+T_comment_option_topicid).value
+            let userid_comment1= document.getElementById('sessionid').value
+            number_comment_number = number_comment -1
+            number_comment_fulltext = '<img src="/images/comments.png" alt="">'+number_comment_number 
+            //comtoid{{topicid_comment}}{{stt}}{{../stt}}
+            $('#CommentDelete').modal('hide')
+            $('#modelCOption').modal('hide')
+
+            document.getElementById('num_comment'+T_comment_option_topicid).innerHTML = number_comment_fulltext
+            document.getElementById('comtoid'+userid_comment1+T_comment_option_topicid+sttcomment+stttopic).hidden = true;
+            
+           
+            //dung ajax gui request len link delete
+            $.ajax({
+                url: '/deletecomment/?idc='+comment_id+"&idt="+T_comment_option_topicid,
+                method:'get',
+                success:function(data){
+                    $('#tr'+id).remove()
+                    window.location.reload();
+                },
+                error:function(data){
+                    console.log(data)
+                }
+            })
+        }
+
+    //////upload image
+        $(document).ready(function(){
+    
+    //Check to see if the window is top if not then display button
+    $(window).scroll(function(){
+        if ($(this).scrollTop() > 100) {
+            $('.scrollToTop').fadeIn();
+        } else {
+            $('.scrollToTop').fadeOut();
+        }
+    });
+    
+    //Click event to scroll to top
+    $('.scrollToTop').click(function(){
+        $('html, body').animate({scrollTop : 0},800);
+        return false;
+    });
+    
+});
+    
+
+    </script>
+</body>
+</html>
